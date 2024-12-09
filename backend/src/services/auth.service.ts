@@ -1,17 +1,18 @@
 import UserModel from "../models/user.model";
 import VerificationCodeModel from "../models/verificationCode.model";
 import VerificationCodeType from "../constants/verificationCodeType";
-import { oneYearFromNow } from "../utils/data";
+import { ONE_DAY_MS, oneYearFromNow, thirtyDaysFromNow } from "../utils/data";
 import SessionModel from "../models/session.model";
 import appAssert from "../utils/appAssert";
 import { CONFLICT, UNAUTHORIZED } from "../constants/http";
-import { refreshTokenSignOptions, signToken } from "../utils/jwt";
+import { RefreshTokenPayload, refreshTokenSignOptions, signToken, verityToken } from "../utils/jwt";
 
 export type CreateAccountParams = {
     email: string;
     password: string;
     userAgent?: string
 }
+
 export const createAccount = async (data: CreateAccountParams) => {
     const existingUser = await UserModel.exists({
         email: data.email
@@ -84,5 +85,44 @@ export const loginUser = async (data: CreateAccountParams) => {
         user: user.omitPassword(),
         accessToken,
         refreshToken
+    };
+};
+
+export const refreshUserAccessToken = async (refreshToken: string) => {
+    const {
+        payload
+    } = verityToken<RefreshTokenPayload>(refreshToken, {
+        secret: refreshTokenSignOptions.secret
+    });
+    appAssert(payload, UNAUTHORIZED, "Invalid refresh token");
+
+    const session = await SessionModel.findById(payload.sessionId);
+    const now = Date.now();
+    appAssert(
+        session && session.expiresAt.getTime() > now,
+        UNAUTHORIZED,
+        "Session expired"
+    );
+
+    //Refresh session if it expires in the next 24 hours
+    const sessionNeedRefresh = session.expiresAt.getTime() - now < ONE_DAY_MS;
+
+    if (sessionNeedRefresh) {
+        session.expiresAt = thirtyDaysFromNow();
+        await session.save();
+    }
+
+    const newRefreshToken = sessionNeedRefresh ? signToken({
+        sessionId: session._id,
+    }, refreshTokenSignOptions) : undefined;
+
+    const accessToken = signToken({
+        userId: session.userId,
+        sessionId: session._id
+    });
+
+    return {
+        accessToken,
+        newRefreshToken
     };
 };

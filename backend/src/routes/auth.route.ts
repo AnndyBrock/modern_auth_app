@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginHandler, registerHandler, logoutHandler } from "../controllers/auth.controlle";
+import { loginHandler, registerHandler, logoutHandler, refreshHandler } from "../controllers/auth.controlle";
 
 const authRoute = Router();
 
@@ -8,5 +8,6 @@ const authRoute = Router();
 authRoute.post("/register", registerHandler);
 authRoute.post("/login", loginHandler);
 authRoute.get("/logout", logoutHandler);
+authRoute.get("/refresh", refreshHandler);
 
 export default authRoute;
