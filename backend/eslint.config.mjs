@@ -16,12 +16,12 @@ export default [
                 "error",
                 {
                     ignoreRestArgs: true,
-                },
+                }
             ],
-
-            "object-curly-spacing": ["error", "always"], // "always" requires spaces; "never" disallows them
+            "object-curly-spacing": ["error", "always"],
         },
     },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
 ];
+
