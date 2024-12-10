@@ -1,16 +1,16 @@
-import catchErrors from "../utils/catchErrors";
-import { createAccount, loginUser, refreshUserAccessToken } from "../services/auth.service";
+import { registerSchema, loginSchema, verificationCodeSchema } from "./auth.schemas";
 import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
+import SessionModel from "../models/session.model";
+import { createAccount, loginUser, refreshUserAccessToken, verifyEmail } from "../services/auth.service";
+import appAssert from "../utils/appAssert";
+import catchErrors from "../utils/catchErrors";
 import {
     clearAuthCookies,
     getAccessTokenCookieOptions,
     getRefreshTokenCookieOptions,
     setAuthCookies
 } from "../utils/cookies";
-import { registerSchema, loginSchema } from "./auth.schemas";
 import { verityToken } from "../utils/jwt";
-import SessionModel from "../models/session.model";
-import appAssert from "../utils/appAssert";
 
 export const registerHandler = catchErrors(async (req, res) => {
         const request = registerSchema.parse({
@@ -63,4 +63,12 @@ export const refreshHandler = catchErrors( async (req, res) => {
     return res.status(OK).cookie("accessToken", accessToken, getAccessTokenCookieOptions()).json({
         message: "Access token refreshed"
     });
+});
+
+export const verifyEmailHandler = catchErrors(async (req, res) => {
+    const verificationCode = verificationCodeSchema.parse(req.params.code);
+
+    const { user } = await verifyEmail(verificationCode);
+
+    return res.status(OK).json({ user, message: "Email successfully verified" });
 });

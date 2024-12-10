@@ -13,9 +13,7 @@ export interface UserDocument extends mongoose.Document {
     omitPassword(): Pick<
         UserDocument,
         // @ts-expect-error eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        "_id" | "email" | "verified" | "createdAt" | "updatedAt" | "__v"
-
-    >;
+        "_id" | "email" | "verified" | "createdAt" | "updatedAt" | "__v">;
 }
 
 const userSchema = new mongoose.Schema<UserDocument>({
