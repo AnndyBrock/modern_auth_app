@@ -6,6 +6,9 @@ import SessionModel from "../models/session.model";
 import appAssert from "../utils/appAssert";
 import { CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED } from "../constants/http";
 import { RefreshTokenPayload, refreshTokenSignOptions, signToken, verityToken } from "../utils/jwt";
+import { sendEmail } from "../utils/sendMail";
+import { getVerifyEmailTemplate } from "../utils/emailTemplates";
+import { APP_ORIGIN } from "../constants/env";
 
 export type CreateAccountParams = {
     email: string;
@@ -32,6 +35,17 @@ export const createAccount = async (data: CreateAccountParams) => {
         type: VerificationCodeType.EmailVerification,
         expiresAt: oneYearFromNow()
     });
+
+    const url = `${APP_ORIGIN}/email/verify/${verificationCode._id}`;
+
+    const { error } = await sendEmail({
+        to: user.email,
+        ...getVerifyEmailTemplate(url)
+    });
+
+    if (error) {
+        console.log(error);
+    }
 
     const session = await SessionModel.create({
         userId,
