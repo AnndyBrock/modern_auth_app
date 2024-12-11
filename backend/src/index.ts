@@ -9,6 +9,7 @@ import { OK } from "./constants/http";
 import authRoute from "./routes/auth.route";
 import userRoutes from "./routes/user.route";
 import authenticate from "./middleware/authenticate";
+import sessionsRoute from "./routes/sessions.route";
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoute);
 
 app.use("/user", authenticate, userRoutes);
+app.use("/sessions", authenticate, sessionsRoute);
 
 app.use(errorHandler);
 
