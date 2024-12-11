@@ -1,7 +1,13 @@
-import { registerSchema, loginSchema, verificationCodeSchema } from "./auth.schemas";
+import { registerSchema, loginSchema, verificationCodeSchema, emailSchema } from "./auth.schemas";
 import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
 import SessionModel from "../models/session.model";
-import { createAccount, loginUser, refreshUserAccessToken, verifyEmail } from "../services/auth.service";
+import {
+    createAccount,
+    loginUser,
+    refreshUserAccessToken,
+    sendPasswordResetEmail,
+    verifyEmail
+} from "../services/auth.service";
 import appAssert from "../utils/appAssert";
 import catchErrors from "../utils/catchErrors";
 import {
@@ -71,4 +77,12 @@ export const verifyEmailHandler = catchErrors(async (req, res) => {
     const { user } = await verifyEmail(verificationCode);
 
     return res.status(OK).json({ user, message: "Email successfully verified" });
+});
+
+export const sendPasswordResetHandler = catchErrors(async (req, res) => {
+    const email = emailSchema.parse(req.body.email);
+
+    await sendPasswordResetEmail(email);
+
+    return res.status(OK).json({ message: "Password reset email send" });
 });
