@@ -7,6 +7,8 @@ import errorHandler from "./middleware/errorHandler";
 import { APP_ORIGIN, PORT } from "./constants/env";
 import { OK } from "./constants/http";
 import authRoute from "./routes/auth.route";
+import userRoutes from "./routes/user.route";
+import authenticate from "./middleware/authenticate";
 
 
 const app = express();
@@ -21,6 +23,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoute);
+
+app.use("/user", authenticate, userRoutes);
 
 app.use(errorHandler);
 
