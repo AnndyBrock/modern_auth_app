@@ -1,10 +1,10 @@
-import { registerSchema, loginSchema, verificationCodeSchema, emailSchema } from "./auth.schemas";
+import { registerSchema, loginSchema, verificationCodeSchema, emailSchema, resetPasswordSchema } from "./auth.schemas";
 import { CREATED, OK, UNAUTHORIZED } from "../constants/http";
 import SessionModel from "../models/session.model";
 import {
     createAccount,
     loginUser,
-    refreshUserAccessToken,
+    refreshUserAccessToken, resetPassword,
     sendPasswordResetEmail,
     verifyEmail
 } from "../services/auth.service";
@@ -85,4 +85,12 @@ export const sendPasswordResetHandler = catchErrors(async (req, res) => {
     await sendPasswordResetEmail(email);
 
     return res.status(OK).json({ message: "Password reset email send" });
+});
+
+export const resetPasswordHandler = catchErrors(async (req, res) => {
+    const request = resetPasswordSchema.parse(req.body);
+
+    await resetPassword(request);
+
+    return clearAuthCookies(res).status(OK).json({ message: "Password was changed" });
 });
