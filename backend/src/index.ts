@@ -11,7 +11,6 @@ import userRoutes from "./routes/user.route";
 import authenticate from "./middleware/authenticate";
 import sessionsRoute from "./routes/sessions.route";
 
-
 const app = express();
 // Middleware
 app.use(express.json());

@@ -219,9 +219,6 @@ export const resetPassword = async ({ password, verificationCode }: ResetPasswor
         expiresAt: { $gt: new Date() }
     });
 
-    console.log(validCode?.expiresAt);
-    console.log(new Date());
-
     appAssert(validCode, NOT_FOUND, "Invalid or expired verification code");
     // update user password
     const updatedUser = await UserModel.findOneAndUpdate(validCode.userId, {
