@@ -1,4 +1,4 @@
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, useNavigate} from "react-router-dom";
 import Login from "./Pages/Login.jsx";
 import Register from "./Pages/Register.jsx";
 import VerifyEmail from "./Pages/VerifyEmail.jsx";
@@ -7,8 +7,12 @@ import ResetPassword from "./Pages/ResetPassword.jsx";
 import AppContainer from "./components/AppContainer.jsx";
 import Profile from "./Pages/Profile.jsx";
 import Settings from "./Pages/Settings.jsx";
+import {setNavigate} from "./lib/navigation.js";
 
 function App() {
+    const navigate = useNavigate();
+
+    setNavigate(navigate)
 
     return (
         <Routes>
