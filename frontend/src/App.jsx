@@ -8,6 +8,7 @@ import AppContainer from "./components/AppContainer.jsx";
 import Profile from "./Pages/Profile.jsx";
 import Settings from "./Pages/Settings.jsx";
 import {setNavigate} from "./lib/navigation.js";
+import Navbar from "./components/Navbar.jsx";
 
 function App() {
     const navigate = useNavigate();
@@ -15,17 +16,21 @@ function App() {
     setNavigate(navigate)
 
     return (
-        <Routes>
-            <Route path="/" element={<AppContainer />} >
-                <Route index element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/email/verify/:code" element={<VerifyEmail />} />
-            <Route path="/password/forgot" element={<ForgotPassword />} />
-            <Route path="/password/reset" element={<ResetPassword />} />
-        </Routes>
+        <>
+            <Navbar />
+
+            <Routes>
+                <Route path="/" element={<AppContainer />} >
+                    <Route index element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
+                </Route>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/email/verify/:code" element={<VerifyEmail />} />
+                <Route path="/password/forgot" element={<ForgotPassword />} />
+                <Route path="/password/reset" element={<ResetPassword />} />
+            </Routes>
+        </>
     );
 }
 
